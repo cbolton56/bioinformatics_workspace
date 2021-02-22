@@ -93,29 +93,9 @@ class Phylo_Tree():
 
 
     def UPGMA(self, G, distance_matrix, dictionary):
-        def newickify(node_to_children, root_node): 
-            visited_nodes = set()
-
-            def newick_render_node(name, distance): 
-                assert name not in visited_nodes, "Error: circular"
-                if name not in node_to_children: 
-                    #leaves
-                    return F'{name}'
-                else: 
-                    visited_nodes.add(name)
-                    children = node_to_children[name]
-                    children_strings = [newick_render_node(child, children[child]) for child in children.keys()]
-                    children_strings = ",".join(children_strings)
-                    return F'({children_strings}){name}'
-
-        #This tree_dict stuff is, admittedly, a pretty terrible work around for not having a binary tree implementation. You live and you learn.
+        #Tree dictionary is a work around for not being able to preorder print directly
         tree_dict = {}  
-        leaves = G.nodes()
-        """
-        for leaf in leaves: 
-            tree_dict[leaf] = {None, None} """
         n_string = ""
-        print("leaves: ", leaves)
         newick_str = "("
         node_set = []
         counter = 0
@@ -135,12 +115,6 @@ class Phylo_Tree():
                 tree_dict[new_node] = {str(newick_info[0]): 0, str(newick_info[1]): 0} 
                 newick_str += new_node + ")"
                 node_set.append(new_node)
-            counter += 1
-        x = counter * "("
-        x += newick_str
-        #G.print_graph()
-        #print("tree dictionary: ")
-        #print(tree_dict)
 
         def newickify(node_to_children, root_node):
             visited_nodes = set()
@@ -160,10 +134,7 @@ class Phylo_Tree():
             return newick_s
 
         head = G.return_head()
-        print("*" * 30)
-        print(newickify(tree_dict, root_node = head))
-        print("*" * 30)
-
+        x = newickify(tree_dict, root_node = head)
         return x
 
     def to_newick(self, newick_str, newick_info, new_node, dictionary): 

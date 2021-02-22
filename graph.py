@@ -49,7 +49,7 @@ class Graph():
         if edge[1] not in self.__graph_dict: 
             self.__graph_dict[edge[1]] = [[], 0, 0] 
         self.__graph_dict[edge[0]][0].append([edge[1], edge[2]])
-        #self.__graph_dict[edge[1]][0].append([edge[0], edge[2]])
+        self.__graph_dict[edge[1]][0].append([edge[0], edge[2]])
 
     def add_edges(self, edges): 
         #method for adding multiple edges at one time
@@ -162,7 +162,7 @@ class Graph():
                 leaf_node = self.return_smaller_subtree(children[0][0], children[1][0])
                 internal = [x[0] for x in children if x[0] != leaf_node]
                 internal_node = internal[0]
-                newick += "(" +str(next_node) + ":" + str(self.return_height(next_node)) + ")" + str(internal_node) + ":" + str(self.return_height(internal_node)) +  ", " + str(leaf_node) + ":" + str(self.return_height(internal_node))  +  ")" 
+                newick += str(internal_node) + ":" + str(self.return_height(internal_node)) +  ", " + str(leaf_node) + ":" + str(self.return_height(internal_node))  + ")"
                 next_node = internal_node
                 counter += 1
             else: 
@@ -181,7 +181,9 @@ class Graph():
                 leaf_node = self.return_smaller_subtree(children[0][0], children[1][0])
                 internal = [x[0] for x in children if x[0] != leaf_node]
                 internal_node = internal[0]
-                newick = str(internal_node) + ", " + str(leaf_node) + ")" + newick
+                weight1 = self.return_edge_weight([next_node, leaf_node])
+                weight2 = self.return_edge_weight([next_node, internal_node])
+                newick = str(internal_node) + ": " + str(weight1) + " , " +  str(leaf_node)+ ": " + str(weight2)  + ")" + newick
                 next_node = internal_node
                 counter += 1
             else: 
@@ -189,10 +191,6 @@ class Graph():
         str1 = "(" * counter 
         newick = str1 + newick
         return newick  
-    
-
-    def print_graph(self): 
-        print(self.__graph_dict)
 
     #Converts a graph object to a JSON file. returns object to be passed into the JSON file for this application
     def to_json(self): 
